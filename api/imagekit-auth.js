@@ -1,4 +1,4 @@
-import { ImageKit } from "imagekit";
+import  ImageKit  from "imagekit";
 
 export default function handler(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
