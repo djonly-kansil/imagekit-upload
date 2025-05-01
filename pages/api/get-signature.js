@@ -19,9 +19,9 @@ export default function handler(req, res) {
 	const expire = Math.floor(Date.now() / 1000) + 60 * 5;
 	
 	const signature = crypto
-		.createHash("sha1")
-		.update(PRIVATE_API_KEY + token + expire)
-		.digest("hex");
+	.createHash("sha1")
+	.update(token + expire + PRIVATE_API_KEY)
+	.digest("hex");
 	
 	res.status(200).json({ token, expire, signature });
 }
