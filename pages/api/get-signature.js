@@ -15,13 +15,13 @@ export default function handler(req, res) {
 		return res.status(500).json({ error: "PRIVATE_API_KEY belum diatur" });
 	}
 	
-	const token = crypto.randomBytes(16).toString("hex");
-	const expire = Math.floor(Date.now() / 1000) + 60 * 5;
+	const token = crypto.randomUUID(); // gunakan UUID agar unik
+	const expire = Math.floor(Date.now() / 1000) + 60 * 5; // 5 menit ke depan, dalam detik
 	
 	const signature = crypto
-	.createHash("sha1")
-	.update(token + expire + PRIVATE_API_KEY)
-	.digest("hex");
+		.createHmac("sha1", PRIVATE_API_KEY)
+		.update(token + expire)
+		.digest("hex");
 	
 	res.status(200).json({ token, expire, signature });
 }
