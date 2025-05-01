@@ -1,12 +1,11 @@
 import crypto from "crypto";
 
 export default function handler(req, res) {
-	// Izinkan permintaan dari semua origin (CORS)
+	// CORS headers
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 	
-	// Tangani preflight (OPTIONS) request
 	if (req.method === "OPTIONS") {
 		return res.status(200).end();
 	}
@@ -21,7 +20,7 @@ export default function handler(req, res) {
 	
 	const signature = crypto
 		.createHash("sha1")
-		.update(token + expire + PRIVATE_API_KEY)
+		.update(PRIVATE_API_KEY + token + expire)
 		.digest("hex");
 	
 	res.status(200).json({ token, expire, signature });
