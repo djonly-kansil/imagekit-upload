@@ -11,10 +11,8 @@ export default function handler(req, res) {
 	}
 	
 	const PRIVATE_API_KEY = process.env.PRIVATE_API_KEY;
-	const PUBLIC_API_KEY = process.env.PUBLIC_API_KEY;
-	
-	if (!PRIVATE_API_KEY || !PUBLIC_API_KEY) {
-		return res.status(500).json({ error: "PRIVATE_API_KEY atau PUBLIC_API_KEY belum diatur" });
+	if (!PRIVATE_API_KEY) {
+		return res.status(500).json({ error: "PRIVATE_API_KEY belum diatur" });
 	}
 	
 	const token = crypto.randomUUID(); // gunakan UUID agar unik
@@ -25,5 +23,5 @@ export default function handler(req, res) {
 		.update(token + expire)
 		.digest("hex");
 	
-	res.status(200).json({ token, expire, signature, publicKey: PUBLIC_API_KEY });
+	res.status(200).json({ token, expire, signature });
 }
