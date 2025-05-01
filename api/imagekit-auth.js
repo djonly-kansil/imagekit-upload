@@ -1,6 +1,6 @@
-import ImageKit from "imagekit";
+const ImageKit = require("imagekit");
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -15,7 +15,6 @@ export default function handler(req, res) {
 		return;
 	}
 	
-	// Debug log: periksa isi environment variable
 	console.log("ENV CHECK:");
 	console.log("IMAGEKIT_PUBLIC_KEY:", process.env.IMAGEKIT_PUBLIC_KEY);
 	console.log("IMAGEKIT_PRIVATE_KEY:", process.env.IMAGEKIT_PRIVATE_KEY ? "OK" : "MISSING");
@@ -34,4 +33,4 @@ export default function handler(req, res) {
 		console.error("ImageKit Auth Error:", err);
 		res.status(500).json({ error: "Internal Server Error" });
 	}
-}
+};
