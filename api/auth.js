@@ -15,16 +15,13 @@ module.exports = function handler(req, res) {
 		return;
 	}
 	
-	console.log("ENV CHECK:");
-	console.log("IMAGEKIT_PUBLIC_KEY:", process.env.IMAGEKIT_PUBLIC_KEY);
-	console.log("IMAGEKIT_PRIVATE_KEY:", process.env.IMAGEKIT_PRIVATE_KEY ? "OK" : "MISSING");
-	console.log("IMAGEKIT_URL_ENDPOINT:", process.env.IMAGEKIT_URL_ENDPOINT);
+	console.log("USING HARDCODED CREDENTIALS");
 	
 	try {
 		const imagekit = new ImageKit({
-			publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-			privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-			urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+			publicKey: "public_cai3Ahsub6oj/v9ZKtEPJAoD+kw=",
+			privateKey: "private_cksQeyrCwKqskK5nxo548Gd/d9M=",
+			urlEndpoint: "https://ik.imagekit.io/taloarane"
 		});
 		
 		const result = imagekit.getAuthenticationParameters();
