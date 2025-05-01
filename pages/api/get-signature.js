@@ -11,10 +11,10 @@ export default function handler(req, res) {
 	}
 	
 	const PRIVATE_API_KEY = process.env.PRIVATE_API_KEY;
-	const PUBLIC_API_KEY = process.env.PUBLIC_API_KEY;
+	const PUBLIC_API_KEY = process.env.IMAGEKIT_PUBLIC_KEY; // disesuaikan
 	
 	if (!PRIVATE_API_KEY || !PUBLIC_API_KEY) {
-		return res.status(500).json({ error: "PRIVATE_API_KEY atau PUBLIC_API_KEY belum diatur" });
+		return res.status(500).json({ error: "PRIVATE_API_KEY atau IMAGEKIT_PUBLIC_KEY belum diatur" });
 	}
 	
 	const token = crypto.randomUUID(); // gunakan UUID agar unik
