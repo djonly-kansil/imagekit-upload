@@ -1,5 +1,3 @@
-// File: api/imagekit-auth.js
-
 import ImageKit from "imagekit";
 
 export default function handler(req, res) {
@@ -19,15 +17,15 @@ export default function handler(req, res) {
 	
 	try {
 		const imagekit = new ImageKit({
-			publicKey: "public_cai3Ahsub6oj/v9ZKtEPJAoD+kw=",
-			privateKey: "private_cksQeyrCwKqskK5nxo548Gd/d9M=",
-			urlEndpoint: "https://ik.imagekit.io/taloarane"
+			publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+			privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+			urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 		});
 		
 		const result = imagekit.getAuthenticationParameters();
 		res.status(200).json(result);
 	} catch (err) {
-		console.error("Server Error:", err);
+		console.error("ImageKit Auth Error:", err);
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 }
