@@ -1,7 +1,6 @@
 const ImageKit = require("imagekit");
 
 module.exports = function handler(req, res) {
-	// Setup CORS headers
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -16,21 +15,20 @@ module.exports = function handler(req, res) {
 		return;
 	}
 	
+	const publicKey = "public_cai3Ahsub6oj/v9ZKtEPJAoD+kw=".trim();
+	const privateKey = "private_cksQeyrCwKqskK5nxo548Gd/d9M=".trim();
+	const urlEndpoint = "https://ik.imagekit.io/taloarane".trim();
+	
 	console.log("USING HARDCODED CREDENTIALS");
-	
-	const publicKey = "public_cai3Ahsub6oj/v9ZKtEPJAoD+kw=";
-	const privateKey = "private_cksQeyrCwKqskK5nxo548Gd/d9M=";
-	const urlEndpoint = "https://ik.imagekit.io/taloarane";
-	
-	console.log("PUBLIC KEY:", publicKey);
+	console.log("PUBLIC KEY:", publicKey, "| TYPE:", typeof publicKey);
 	console.log("PRIVATE KEY:", privateKey ? "OK" : "MISSING");
-	console.log("URL ENDPOINT:", urlEndpoint);
+	console.log("URL ENDPOINT:", urlEndpoint, "| TYPE:", typeof urlEndpoint);
 	
 	try {
 		const imagekit = new ImageKit({
-			publicKey: publicKey,
-			privateKey: privateKey,
-			urlEndpoint: urlEndpoint
+			publicKey,
+			privateKey,
+			urlEndpoint
 		});
 		
 		const result = imagekit.getAuthenticationParameters();
