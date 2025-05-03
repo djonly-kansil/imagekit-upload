@@ -7,6 +7,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"firebase-admin": "^11.10.1",
 		"next": "latest",
 		"react": "latest",
 		"react-dom": "latest"
