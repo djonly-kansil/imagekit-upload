@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { initializeApp, cert } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { getAuth } from "../../lib/firebase-admin";
 
 const app = !global._firebaseApp ? initializeApp({
 	credential: cert({
