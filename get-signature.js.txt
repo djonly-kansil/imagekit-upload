@@ -1,6 +1,6 @@
 // pages/api/get-signature.js
 import crypto from "crypto";
-import { auth, db } from "../../lib/firebaseAdmin";
+import { auth } from "../../lib/firebaseAdmin";
 
 export default async function handler(req, res) {
 	res.setHeader("Access-Control-Allow-Origin", "*");
@@ -20,12 +20,15 @@ export default async function handler(req, res) {
 		const decoded = await auth.verifyIdToken(idToken);
 		const { uid } = decoded;
 		
-		// Cek role via Firestore Admin SDK (bukan REST API)
-		const userSnap = await db.doc(`users/${uid}`).get();
-		const role = userSnap.exists ? userSnap.data().role : undefined;
+		// Cek role via REST Firestore API
+		const userDoc = await fetch(
+			`https://firestore.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_ID}/databases/(default)/documents/users/${uid}`
+		);
+		const userData = await userDoc.json();
+		const role = userData.fields?.role?.stringValue;
 		
 		console.log("User UID:", uid);
-		console.log("Role ditemukan:", role);
+console.log("Role ditemukan:", role);
 		
 		if (!["admin", "editor"].includes(role)) {
 			return res.status(403).json({ error: "Akses ditolak. Role tidak valid." });
@@ -49,7 +52,7 @@ export default async function handler(req, res) {
 			publicKey: PUBLIC_API_KEY,
 		});
 	} catch (err) {
-		console.error("Kesalahan saat verifikasi token atau akses Firestore:", err);
+		console.error(err);
 		return res.status(401).json({ error: "Token tidak valid atau server error" });
 	}
 }
