@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { initializeApp, cert } from "firebase-admin/app";
-import { getAuth } from "../../lib/firebaseAdmin";
+import { auth } from "../../lib/firebaseAdmin";
 
 const app = !global._firebaseApp ? initializeApp({
 	credential: cert({
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 	const idToken = authHeader.split("Bearer ")[1];
 	
 	try {
-		const decoded = await getAuth().verifyIdToken(idToken);
+		const decoded = await auth().verifyIdToken(idToken);
 		const { uid } = decoded;
 		
 		// Di sini kamu bisa cek Firestore atau custom claims
