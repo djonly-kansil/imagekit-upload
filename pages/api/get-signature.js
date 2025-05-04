@@ -27,6 +27,9 @@ export default async function handler(req, res) {
 		const userData = await userDoc.json();
 		const role = userData.fields?.role?.stringValue;
 		
+		console.log("User UID:", uid);
+console.log("Role ditemukan:", role);
+		
 		if (!["admin", "editor"].includes(role)) {
 			return res.status(403).json({ error: "Akses ditolak. Role tidak valid." });
 		}
