@@ -1,19 +1,16 @@
 import crypto from "crypto";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore"; // Tambahkan ini
 
-// Inisialisasi Firebase Admin SDK
-const app = initializeApp({
+const app = !global._firebaseApp ? initializeApp({
 	credential: cert({
 		projectId: process.env.FIREBASE_PROJECT_ID,
 		clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 		privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
 	}),
-});
+}) : global._firebaseApp;
 
-const auth = getAuth(app);
-const db = getFirestore(app); // Inisialisasi Firestore
+global._firebaseApp = app;
 
 export default async function handler(req, res) {
 	res.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,31 +29,23 @@ export default async function handler(req, res) {
 	const idToken = authHeader.split("Bearer ")[1];
 	
 	try {
-		// Verifikasi token Firebase
-		const decoded = await auth.verifyIdToken(idToken);
+		const decoded = await getAuth().verifyIdToken(idToken);
 		const { uid } = decoded;
 		
-		// Baca data user dari Firestore menggunakan Admin SDK
-		const userRef = db.collection("users").doc(uid);
-		const userDoc = await userRef.get();
+		// Di sini kamu bisa cek Firestore atau custom claims
+		const userDoc = await fetch(`https://firestore.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_ID}/databases/(default)/documents/users/${uid}`);
+		const userData = await userDoc.json();
 		
-		if (!userDoc.exists) {
-			return res.status(403).json({ error: "User tidak ditemukan" });
-		}
-		
-		const userData = userDoc.data();
-		const role = userData.role; // Akses langsung field "role"
-		console.log("Role user:", role); // Debugging
-		
+		const role = userData.fields?.role?.stringValue;
 		if (!["admin", "editor"].includes(role)) {
 			return res.status(403).json({ error: "Akses ditolak. Role tidak valid." });
 		}
 		
-		// Generate signature ImageKit
-		const PRIVATE_API_KEY = process.env.IMAGEKIT_PRIVATE_KEY;
+		// Signature generation (ImageKit)
+		const PRIVATE_API_KEY = process.env.PRIVATE_API_KEY;
 		const PUBLIC_API_KEY = process.env.IMAGEKIT_PUBLIC_KEY;
 		const token = crypto.randomUUID();
-		const expire = Math.floor(Date.now() / 1000) + 60 * 5; // 5 menit
+		const expire = Math.floor(Date.now() / 1000) + 60 * 5;
 		
 		const signature = crypto
 			.createHmac("sha1", PRIVATE_API_KEY)
@@ -71,7 +60,7 @@ export default async function handler(req, res) {
 		});
 		
 	} catch (err) {
-		console.error("Error di endpoint /get-signature:", err);
-		return res.status(500).json({ error: "Server error" });
+		console.error(err);
+		return res.status(401).json({ error: "Token tidak valid atau server error" });
 	}
 }
